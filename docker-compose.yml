@@ -1,0 +1,29 @@
+version: '3'
+ 
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: >
+      sh -c "python3 manage.py makemigrations &&
+             python3 manage.py migrate &&
+             python3 manage.py runserver 0.0.0.0:8000"
+ 
+  redis:
+    image: redis:alpine
+
+  celery:
+    restart: always
+    build:
+      context: .
+    command: celery -A Cryptocurrency worker -l info -B
+    volumes:
+      - ./app:/app
+    
+    depends_on:
+      - redis
+      - app

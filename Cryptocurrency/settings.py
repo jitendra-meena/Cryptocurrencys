@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-)g_mcx)+u^(^@^1*zj9!!(a1%238&je4*4x02=grm1aa+r^h42
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -93,13 +93,19 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+# CELERY_BEAT_SCHEDULE = {
+#     "create_alert": {
+#         "task": "core.task.btc_realtime_price_tasks",
+#         "schedule": crontab(minute="*/1"),
+#     },
+# }
 CELERY_BEAT_SCHEDULE = {
-    "create_alert": {
-        "task": "core.task.btc_realtime_price_tasks",
-        "schedule": crontab(minute="*/1"),
-    },
+    'list_market_create_alertcatalogue': {
+        'task': 'core.task.btc_realtime_price_tasks',
+        'schedule': timedelta(seconds=1),
+        'args': (['self'],)
+    }
 }
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
