@@ -5,24 +5,28 @@ from .models import *
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,AllowAny
-from .utils import get_realtime_price
+from .utils import get_btc_realtime_price
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.generics import ListAPIView
+from .task import btc_realtime_price_tasks
 
-
-class AlertList(APIView):
+class AlertList(ListAPIView):
+    queryset = BTCAlert.objects.all()
     permission_classes = [AllowAny]
     serializer_class = AlertListSerializer
-    def get(self, request, format=None):
-        get_realtime_price()
-        alert = BTCAlert.objects.all()
-        serializer = AlertListSerializer(alert,many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['price_status']
+    
+    # def get(self, request, format=None):
+    #     get_realtime_price()
+    #     alert = BTCAlert.objects.all()
+    #     serializer = AlertListSerializer(alert,many=True)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
         
 
 
-
-
 class CreateAlert(APIView):
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = AlertListSerializer
     def post(self, request, format=None):
         try:
@@ -35,9 +39,8 @@ class CreateAlert(APIView):
             return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
 class AlertDelete(APIView):
+    permission_classes = [IsAuthenticated]
     def delete(self, request, id):
         alert = BTCAlert.objects.get(id = id)
         data = {'status':'deleted'}
