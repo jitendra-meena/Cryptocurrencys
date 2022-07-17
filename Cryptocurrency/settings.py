@@ -217,5 +217,5 @@ EMAIL_HOST = "smtp.gmail.com"
 # EMAIL_USE_TLS = True
 EMAIL_USE_SSL = True
 EMAIL_PORT = 465
-EMAIL_HOST_USER = "thoughtwin.jitendra@gmail.com"
-EMAIL_HOST_PASSWORD = "jitendra12345"
+EMAIL_HOST_USER = "Email"
+EMAIL_HOST_PASSWORD = "***"
